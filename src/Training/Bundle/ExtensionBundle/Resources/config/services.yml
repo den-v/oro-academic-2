@@ -1,0 +1,9 @@
+services:
+  Training\Bundle\ExtensionBundle\Decorator\EntityNameProviderDecorator:
+    decorates: oro_locale.entity_name_provider
+    arguments:
+      - '@.inner' # `decoration_inner_name`
+
+  Training\Bundle\ExtensionBundle\EventListener\UserViewNamingListener:
+    tags:
+      - { name: kernel.event_listener, event: oro_ui.scroll_data.before.userView, method: onUserView }

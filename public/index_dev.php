@@ -3,6 +3,7 @@
 // Need to trace all kind of errors
 error_reporting(-1);
 ini_set('display_errors', 'On');
+putenv('ORO_ENV=dev');
 
 // if you don't want to set up permissions the proper way, just uncomment the following PHP line
 // read http://symfony.com/doc/current/book/installation.html#configuration-and-setup for more information
