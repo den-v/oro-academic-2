@@ -1,5 +1,6 @@
 <?php
 
+putenv('ORO_ENV=prod');
 require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
 
 return function (array $context) {
