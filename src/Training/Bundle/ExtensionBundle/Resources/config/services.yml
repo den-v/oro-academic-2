@@ -2,7 +2,8 @@ services:
   Training\Bundle\ExtensionBundle\Decorator\EntityNameProviderDecorator:
     decorates: oro_locale.entity_name_provider
     arguments:
-      - '@.inner' # `decoration_inner_name`
+      - '@.inner'
+      - '@Training\Bundle\UserNamingBundle\Provider\UserFormattedNameProvider'
 
   Training\Bundle\ExtensionBundle\EventListener\UserViewNamingListener:
     tags:

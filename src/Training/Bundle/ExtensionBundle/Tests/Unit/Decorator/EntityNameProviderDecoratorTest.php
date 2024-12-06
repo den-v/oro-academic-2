@@ -2,93 +2,90 @@
 
 namespace Training\Bundle\ExtensionBundle\Tests\Unit\Decorator;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
 use Training\Bundle\ExtensionBundle\Decorator\EntityNameProviderDecorator;
+use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
+use Oro\Bundle\UserBundle\Entity\User;
+use Training\Bundle\UserNamingBundle\Entity\UserNamingType;
+use Training\Bundle\UserNamingBundle\Provider\UserFormattedNameProvider;
 
 class EntityNameProviderDecoratorTest extends TestCase
 {
-    /** @var EntityNameProviderInterface|MockObject */
     private $originalProvider;
-
-    /** @var EntityNameProviderDecorator */
+    private $formattedNameProvider;
     private $decorator;
 
     protected function setUp(): void
     {
-        parent::setUp();
-
-        $this->originalProvider = $this->getMockForAbstractClass(EntityNameProviderInterface::class);
-        $this->decorator = new EntityNameProviderDecorator($this->originalProvider);
+        $this->originalProvider = $this->createMock(EntityNameProviderInterface::class);
+        $this->formattedNameProvider = $this->createMock(UserFormattedNameProvider::class);
+        $this->decorator = new EntityNameProviderDecorator(
+            $this->originalProvider,
+            $this->formattedNameProvider
+        );
     }
 
-    /**
-     * Data provider for the getName tests
-     */
-    public function nameProvider(): array
+    public function testGetNameWithUserEntityAndNamingType()
     {
-        return [
-            'to_be_decorated' => [
-                $this->prepareUser('John', 'Doe', 'Middle'),
-                'Doe John Middle'
-            ],
-            'not_to_be_decorated' => [
-                new \stdClass(),
-                'Entity Name'
-            ],
-        ];
+        $user = $this->getMockBuilder(User::class)
+            ->addMethods(['getNamingType'])
+            ->getMock();
+        $namingType = $this->createMock(UserNamingType::class);
+        $namingType->method('getFormat')->willReturn('format_string');
+        $user->expects($this->once())
+            ->method('getNamingType')
+            ->willReturn($namingType);
+
+        $this->formattedNameProvider
+            ->expects($this->once())
+            ->method('getFormattedName')
+            ->with($user, 'format_string')
+            ->willReturn('John Doe');
+
+        $result = $this->decorator->getName('format', 'en', $user);
+        $this->assertEquals('John Doe', $result);
     }
 
-    private function prepareUser(string $firstName, string $lastName, string $middleName) : User
+    public function testGetNameWithUserEntityAndNoNamingType()
     {
-        $user = new User();
-        $user->setFirstName($firstName);
-        $user->setLastName($lastName);
-        $user->setMiddleName($middleName);
-
-        return $user;
-    }
-
-    /**
-     * Test the getName method with multiple data sets
-     *
-     * @dataProvider nameProvider
-     */
-    public function testGetName($entity, $expected): void
-    {
-        if (!$entity instanceof User) {
-            $this->originalProvider
-                ->expects($this->once())
-                ->method('getName')
-                ->with($this->equalTo('full'), $this->equalTo('en'), $this->equalTo($entity))
-                ->willReturn($expected);
-        }
-
-        $result = $this->decorator->getName('full', 'en', $entity);
-
-        $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * Test the getNameDQL method to ensure it delegates to the original provider
-     */
-    public function testGetNameDQL(): void
-    {
-        $format = 'full';
-        $locale = 'en';
-        $className = User::class;
-        $alias = 'u';
+        $user = $this->createMock(User::class);
+        $user->expects($this->once())
+            ->method('getNamingType')
+            ->willReturn(null);
 
         $this->originalProvider
             ->expects($this->once())
+            ->method('getName')
+            ->with('format', 'en', $user)
+            ->willReturn('Original Name');
+
+        $result = $this->decorator->getName('format', 'en', $user);
+        $this->assertEquals('Original Name', $result);
+    }
+
+    public function testGetNameWithNonUserEntity()
+    {
+        $entity = $this->createMock(\stdClass::class);
+
+        $this->originalProvider
+            ->expects($this->once())
+            ->method('getName')
+            ->with('format', 'en', $entity)
+            ->willReturn('Non-user Name');
+
+        $result = $this->decorator->getName('format', 'en', $entity);
+        $this->assertEquals('Non-user Name', $result);
+    }
+
+    public function testGetNameDQL()
+    {
+        $this->originalProvider
+            ->expects($this->once())
             ->method('getNameDQL')
-            ->with($this->equalTo($format), $this->equalTo($locale), $this->equalTo($className), $this->equalTo($alias))
-            ->willReturn('DQL Expression');
+            ->with('format', 'en', 'User', 'u')
+            ->willReturn('SELECT ...');
 
-        $result = $this->decorator->getNameDQL($format, $locale, $className, $alias);
-
-        $this->assertEquals('DQL Expression', $result);
+        $result = $this->decorator->getNameDQL('format', 'en', 'User', 'u');
+        $this->assertEquals('SELECT ...', $result);
     }
 }
