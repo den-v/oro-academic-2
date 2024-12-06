@@ -1,0 +1,17 @@
+navigation:
+  menu_config:
+    items:
+      user_naming_types:
+        label: 'training.usernaming.usernamingtype.entity_plural_label'
+        route: 'training_user_naming_type_index'
+        position: 20
+    tree:
+      application_menu:
+        children:
+          system_tab:
+            children:
+              users_management:
+                children:
+                  user_naming_types: ~
+  titles:
+    training_user_naming_type_index: ~
