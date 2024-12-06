@@ -18,7 +18,10 @@ class UserFormattedNameProvider
 
         return preg_replace_callback(
             '/\b(PREFIX|FIRST|MIDDLE|LAST|SUFFIX)\b/',
-            fn($matches) => $replacements[$matches[0]] ?? $matches[0],
+            function ($matches) use ($replacements) {
+                $placeholder = $matches[0];
+                return $replacements[$placeholder] ?? '';
+            },
             $format
         );
     }

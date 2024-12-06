@@ -27,3 +27,61 @@ datagrids:
         title:
           type:      string
           data_name: type.title
+    properties:
+      id: ~
+      view_link:
+        type:       url
+        route:      training_user_naming_type_view
+        params:     [ id ]
+    actions:
+      view:
+        type:          navigate
+        label:         oro.grid.action.view
+        icon:          eye-open
+        link:          view_link
+        rowAction:     true
+
+  training-user-naming-type-users-grid:
+    source:
+      type: orm
+      query:
+        select:
+          - user.username
+          - user.firstName
+          - user.middleName
+          - user.lastName
+          - user.namePrefix
+          - user.nameSuffix
+          - namingType.format as namingFormat
+        from:
+          - { table: 'Oro\Bundle\UserBundle\Entity\User', alias: user }
+        join:
+          inner:
+            - { join: 'user.namingType', alias: namingType }
+        where:
+          and:
+            - namingType.id = :namingTypeId
+      bind_parameters:
+        -   name: namingTypeId
+    columns:
+      username:
+        label: 'oro.user.username.label'
+      namePrefix:
+        label: 'oro.user.name_prefix.label'
+      firstName:
+        label: 'oro.user.first_name.label'
+      middleName:
+        label: 'oro.user.middle_name.label'
+      lastName:
+        label: 'oro.user.last_name.label'
+      nameSuffix:
+        label: 'oro.user.name_suffix.label'
+      formattedName:
+        label: 'oro.user.formatted_name.label'
+        type: twig
+        frontend_type: html
+        template: '@TrainingUserNaming/UserNamingType/Datagrid/columns/formattedName.html.twig'
+    filters: ~
+    options:
+      toolbarOptions:
+        hide: true

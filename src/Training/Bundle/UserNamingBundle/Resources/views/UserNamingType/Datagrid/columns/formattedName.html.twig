@@ -1,0 +1,8 @@
+{% set format = record.getValue('namingFormat') %}
+{% set firstName = record.getValue('firstName') %}
+{% set middleName = record.getValue('middleName') %}
+{% set lastName = record.getValue('lastName') %}
+{% set namePrefix = record.getValue('namePrefix') %}
+{% set nameSuffix = record.getValue('nameSuffix') %}
+
+{{ formatted_name(format, firstName, middleName, lastName, namePrefix, nameSuffix) }}
