@@ -1,6 +1,10 @@
 {% import '@OroUI/macros.html.twig' as UI %}
 
-{{ UI.renderProperty('training.extension.full_formatted_name'|trans, entity|oro_format_name) }}
+{% if is_granted('training_user_naming_info') %}
+    {% if entity.namingType %}
+        {{ UI.renderProperty('training.extension.full_formatted_name'|trans, entity|oro_format_name) }}
+    {% endif %}
+{% endif %}
 {{ UI.renderProperty('oro.user.name_prefix.label'|trans, entity.namePrefix) }}
 {{ UI.renderProperty('oro.user.first_name.label'|trans, entity.firstName) }}
 {{ UI.renderProperty('oro.user.middle_name.label'|trans, entity.middleName) }}
