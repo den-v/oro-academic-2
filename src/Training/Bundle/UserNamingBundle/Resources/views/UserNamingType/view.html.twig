@@ -1,0 +1,57 @@
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+{% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
+
+{% oro_title_set({params : {"%entity.title%": entity.title|default('N/A') }}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('training_user_naming_type_index'),
+        'indexLabel': 'training.usernaming.usernamingtype.entity_plural_label'|trans,
+        'entityTitle': entity.title
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {%- set userNamingTypeInformation -%}
+        <div class="row-fluid form-horizontal">
+            <div class="responsive-block">
+                {{ UI.renderProperty('training.usernaming.usernamingtype.title.label'|trans, entity.title) }}
+                {{ UI.renderProperty('training.usernaming.usernamingtype.format.label'|trans, entity.format) }}
+                {{ UI.renderProperty('training.usernaming.formatted_name_example'|trans, formatted_name_example(entity.format)) }}
+            </div>
+            <div class="responsive-block">
+                {{ entityConfig.renderDynamicFields(entity) }}
+            </div>
+        </div>
+    {%- endset -%}
+
+    {% set dataBlocks = [
+        {
+            'title': 'General Information'|trans,
+            'class': 'active',
+            'subblocks': [
+            {'data' : [userNamingTypeInformation]}
+        ]
+        }
+    ] %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'oro.user.entity_plural_label'|trans,
+        'subblocks': [{
+            'title': '',
+            'useSpan': false,
+            'data' : [
+                dataGrid.renderGrid('training-user-naming-type-users-grid', {'namingTypeId': entity.id})
+            ]
+        }]
+    }] ) %}
+
+    {% set id = 'training-user-naming-type-view' %}
+    {% set data = { 'dataBlocks': dataBlocks } %}
+
+    {{ parent() }}
+{% endblock content_data %}

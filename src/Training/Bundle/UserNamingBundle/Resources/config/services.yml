@@ -1,2 +1,8 @@
 services:
   Training\Bundle\UserNamingBundle\Provider\UserFormattedNameProvider: ~
+
+  Training\Bundle\UserNamingBundle\Twig\UserNamingExtension:
+    arguments:
+      - '@Training\Bundle\UserNamingBundle\Provider\UserFormattedNameProvider'
+    tags:
+      - { name: twig.extension }
