@@ -6,3 +6,15 @@ services:
       - '@Training\Bundle\UserNamingBundle\Provider\UserFormattedNameProvider'
     tags:
       - { name: twig.extension }
+
+  Training\Bundle\UserNamingBundle\Api\Processor\Get\NameExampleGetProcessor:
+    arguments:
+      - '@Training\Bundle\UserNamingBundle\Provider\UserFormattedNameProvider'
+    tags:
+      - { name: oro.api.processor, action: get, group: finalize, class: Training\Bundle\UserNamingBundle\Entity\UserNamingType }
+
+  Training\Bundle\UserNamingBundle\Api\Processor\GetList\NameExampleGetListProcessor:
+    arguments:
+      - '@Training\Bundle\UserNamingBundle\Provider\UserFormattedNameProvider'
+    tags:
+      - { name: oro.api.processor, action: get_list, group: finalize, class: Training\Bundle\UserNamingBundle\Entity\UserNamingType }
