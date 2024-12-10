@@ -25,4 +25,16 @@ class UserFormattedNameProvider
             $format
         );
     }
+
+    public function getFormattedNameExample(string $format): string
+    {
+        $user = new User();
+        $user->setNamePrefix('Mr.')
+            ->setFirstName('John')
+            ->setMiddleName('M')
+            ->setLastName('Doe')
+            ->setNameSuffix('Jr.');
+
+        return $this->getFormattedName($user, $format);
+    }
 }

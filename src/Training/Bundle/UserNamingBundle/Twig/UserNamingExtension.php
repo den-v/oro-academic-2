@@ -35,14 +35,7 @@ class UserNamingExtension extends AbstractExtension
      */
     public function getFormattedNameExample(string $format): string
     {
-        $user = new User();
-        $user->setNamePrefix('Mr.')
-            ->setFirstName('John')
-            ->setMiddleName('M')
-            ->setLastName('Doe')
-            ->setNameSuffix('Jr.');
-
-        return $this->formattedNameProvider->getFormattedName($user, $format);
+        return $this->formattedNameProvider->getFormattedNameExample($format);
     }
 
     /**
