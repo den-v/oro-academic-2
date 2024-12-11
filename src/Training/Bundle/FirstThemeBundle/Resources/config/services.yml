@@ -1,0 +1,4 @@
+services:
+  Training\Bundle\FirstThemeBundle\Layout\DataProvider\WeatherDataProvider:
+    tags:
+      - { name: layout.data_provider, alias: training_first_theme_weather }
